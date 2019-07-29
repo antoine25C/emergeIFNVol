@@ -22,7 +22,8 @@ modeles_hdec_IFN <- function(dos_projet = NULL){
   #-------------------choix du dossier de travail-----
   if (is.null(dos_projet)){
     dir <-try(choose.dir(caption = "choisir le dossier où seront enregistrer toutes les données"))
-    name <- svDialogs::dlg_input(message = "entrez le nom du dossier qui sera creer pour stocker toutes les donnees de ce projet")$res
+    name <- svDialogs::dlg_input(message = "entrez le nom du dossier qui sera creer pour stocker toutes les donnees de ce projet")
+    name <- name$res
     dos_projet <- paste(dir, name, sep = "/")
   }
   if(!dir.exists(dos_projet)){
@@ -38,10 +39,11 @@ modeles_hdec_IFN <- function(dos_projet = NULL){
   #-------------------installation du package onfR-------------------
   if (!require("onfR")) install.packages(system.file("onfR","onfR_0.9.6.zip", package = "emergeIFNVol"),repos = NULL, type = "win.binary")
   library(onfR)
+  library(IFNtraitement)
 
   #----------------chargement des Rdata nécessaires-----------
   code_ess <-emergeIFNVol::code_ess
-  codeser <- emergeIFNVol::codeser
+  codeser <- emergeIFNVol::code_ser
   Ser_shape <- emergeIFNVol::Ser_shape
   dep <- emergeIFNVol::dep
   dep_choix <- tk_select.list(as.vector(dep[,2]), preselect = NULL, multiple = T,
