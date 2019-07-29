@@ -39,6 +39,7 @@ modeles_hdec_IFN <- function(dos_projet = NULL){
   #-------------------installation du package onfR-------------------
   if (!require("onfR")) install.packages(system.file("onfR","onfR_0.9.6.zip", package = "emergeIFNVol"),repos = NULL, type = "win.binary")
   library(onfR)
+  if(!require("IFNtraitement")) devtools::install_github("antoine25C/IFNtraitement")
   library(IFNtraitement)
 
   #----------------chargement des Rdata nécessaires-----------
