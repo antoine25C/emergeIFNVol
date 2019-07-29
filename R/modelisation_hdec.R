@@ -47,23 +47,23 @@ modeles_hdec_IFN <- function(dos_projet = NULL){
   codeser <- emergeIFNVol::code_ser
   Ser_shape <- emergeIFNVol::Ser_shape
   dep <- emergeIFNVol::dep
-  dep_choix <- tk_select.list(as.vector(dep[,2]), preselect = NULL, multiple = T,
+  choix_dept <- tk_select.list(as.vector(dep[,2]), preselect = NULL, multiple = T,
                               title = "Selectionner les départements dont vous souhaiter extraire les données IFN")
-  dep_choix <-left_join(data.frame(NomDep = dep_choix), dep[,c('NumDep','NomDep')], by = 'NomDep')[,'NumDep']
+  choix_dept <-left_join(data.frame(NomDep = choix_dept), dep[,c('NumDep','NomDep')], by = 'NomDep')[,'NumDep']
   ser <- emergeIFNVol::ser
-  ser_choix <- tk_select.list(as.vector(ser[,2]), preselect = NULL, multiple = T,
+  choix_ser <- tk_select.list(as.vector(ser[,2]), preselect = NULL, multiple = T,
                               title = "Selectionner les sylvo-éco-régions sur lesquelles vous souhaitez restreindre les données IFN")
-  ser_choix <-as.character(left_join(data.frame(NomSER = ser_choix), ser, by = 'NomSER')[,'codeser'])
+  choix_ser <-as.character(left_join(data.frame(NomSER = choix_ser), ser, by = 'NomSER')[,'codeser'])
   an_debut <- tk_select.list(2005:2017, preselect = NULL, multiple = F,
                          title = "choix de la première année dont les données IFN seront considérées")
   an_fin <- tk_select.list(an_debut:2017, preselect = NULL, multiple = F,
                              title = "choix de la dernière année dont les données IFN seront considérées")
-  IFN <- import_IFN(choix_dept = dep_choix, choix_ser = ser_choix, annees = an_debut:an_fin)
+  IFN <- import_IFN(choix_dept = choix_dept, choix_ser = choix_ser, annees = an_debut:an_fin)
   IFN <- classif_cat_Diam(IFN)
   IFN_vol <- BD_vol(IFN, code_ess)
   resultat <-Nb_arbre_hdec_bois_fort(IFN_vol, code_ess, nb_arbre_min = 270)
   res_modelisation <- modelisation(IFN_vol, resultat$tbl_corresp)
-  modele_dir <- str_c(dos_projet,"/modeles/NumDep_",str_c(dep_choix, collapse = "_"),"_NomSER_",str_c(ser_choix, collapse = "_"),collapse = "")
+  modele_dir <- str_c(dos_projet,"/modeles/NumDep_",str_c(choix_dept, collapse = "_"),"_NomSER_",str_c(choix_ser, collapse = "_"),collapse = "")
   dir.create(modele_dir)
   saveRDS(res_modelisation, str_c(modele_dir,"modele.rds",sep= "/"))
   dir.create(str_c(modele_dir,"graphs", sep ="/"))
