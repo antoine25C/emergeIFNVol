@@ -29,7 +29,7 @@ BD_vol <- function(IFN_data, code_ess){
     IFNarbres_ser <-IFN_data$IFNarbres[[i]]
     IFNarbres_ser <- IFNarbres_ser %>%
       left_join(code_ess[,c("espar","code","fam")], by='espar') %>%
-      filter(!is.na(htot),
+      dplyr::filter(!is.na(htot),
              !is.na(hdec),
              grd_catD != "Perche",
              Annee != 2014,
@@ -86,9 +86,11 @@ Nb_arbre_hdec_bois_fort <- function(IFN_vol, code_ess, nb_arbre_min = 200){
   ess <- character()
   list_prop <- list()
   for (i in 1:length(IFN_vol$IFNarbres)){
-    IFN_vol$IFNarbres$code[IFN_vol$IFNarbres$code %in% c("CHP", "CHS", "CHX")] <- "CHE"
+    IFN_vol$IFNarbres[[i]]$code <- as.character(IFN_vol$IFNarbres[[i]]$code)
+    IFN_vol$IFNarbres[[i]]$code[IFN_vol$IFNarbres[[i]]$code %in% c("CHP", "CHS", "CHX")] <- "CHE"
+    IFN_vol$IFNarbres[[i]]$code <- as.factor(IFN_vol$IFNarbres[[i]]$code)
     decoupe_0_2 <- IFN_vol$IFNarbres[[i]] %>%
-      filter(decoupe %in% c(0,2)) %>%
+      dplyr::filter(decoupe %in% c(0,2)) %>%
       group_by(code) %>%
       summarise(nb_bois_fort = n())
     decoupe_0_2$code <- as.character(decoupe_0_2$code)
@@ -117,9 +119,9 @@ Nb_arbre_hdec_bois_fort <- function(IFN_vol, code_ess, nb_arbre_min = 200){
   for (col in 2:dim(res_ess)[2]){
     res_ess[,col][is.na(res_ess[,col])] <- 0
   }
-  res_ess$nb_arbre_tot <- rowSums(res_ess[,str_detect(colnames(res_ess), pattern = "nb_arbre")])
-  res_ess$nb_bois_fort_tot <- rowSums(res_ess[,str_detect(colnames(res_ess), pattern = "nb_bois_fort")])
-  res_ess$prop_tot <- (res_ess$nb_bois_fort_tot/res_ess$nb_arbre_tot)*10
+  res_ess$nb_arbre_tot <- rowSums(as.data.frame(res_ess[,str_detect(colnames(res_ess), pattern = "nb_arbre")]))
+  res_ess$nb_bois_fort_tot <- rowSums(as.data.frame(res_ess[,str_detect(colnames(res_ess), pattern = "nb_bois_fort")]))
+  res_ess$prop_tot <- (res_ess$nb_bois_fort_tot/res_ess$nb_arbre_tot)*100
 
   list_prop <-list.append(list_prop, res_ess[,c(1, (dim(res_ess)[2]-2):dim(res_ess)[2])])
   names(list_prop)[length(list_prop)]<-"tt_ser"
@@ -222,11 +224,11 @@ modelisation <- function(IFN_data, tbl_corresp_model){
     for (code_model in unique(arbres[,nom_ser])[unique(arbres[,nom_ser]) != "tt_ser"]){
       if(!(code_model %in% c('F', 'R'))){
         BD <- arbres[arbres[, nom_ser] == code_model,] %>%
-          filter(decoupe %in% c(0,2)) %>%
+          dplyr::filter(decoupe %in% c(0,2)) %>%
           dplyr::select(ida,hdec, htot, c13, decroi, espar)
       } else {
         BD <- arbres[arbres[, 'fam'] == code_model,] %>%
-          filter(decoupe %in% c(0,2)) %>%
+          dplyr::filter(decoupe %in% c(0,2)) %>%
           dplyr::select(ida,hdec, htot, c13, decroi, espar)
       }
 
@@ -257,7 +259,7 @@ modelisation <- function(IFN_data, tbl_corresp_model){
       RMSE = function(ref, predict){
         df = data.frame(ref = ref,predict =predict)
         df <- df %>%
-          filter(!is.na(ref),
+          dplyr::filter(!is.na(ref),
                  !is.na(predict))
         return(sqrt(mean((df$predict - df$ref)^2)))
       }

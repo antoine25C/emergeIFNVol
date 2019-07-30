@@ -15,7 +15,7 @@
 #' forme d'archive RDS le'on résultat de la fonction emergeIFNVol::modelisation(...)
 #' @export
 #'
-#' @import tcltk dplyr stats rlist stringr sf ggplot2 png grid svDialogs
+#' @import tcltk dplyr stats rlist stringr sf ggplot2 png grid svDialogs xlsx
 #'
 #' @examples pas d'exemple disponible actuellement
 modeles_hdec_IFN <- function(dos_projet = NULL){
@@ -32,9 +32,11 @@ modeles_hdec_IFN <- function(dos_projet = NULL){
   if(!dir.exists(paste(dos_projet,"Rdata",sep = "/"))){
     dir.create(paste(dos_projet,"Rdata",sep = "/"), showWarnings = F)
   }
-
   if(!dir.exists(paste(dos_projet,"modeles",sep = "/"))){
     dir.create(paste(dos_projet,"modeles",sep = "/"), showWarnings = F)
+  }
+  if(!dir.exists(paste(dos_projet,"IFNdon",sep = "/"))){
+    dir.create(paste(dos_projet,"IFNdon",sep = "/"), showWarnings = F)
   }
   #-------------------installation du package onfR-------------------
   if (!require("onfR")) install.packages(system.file("onfR","onfR_0.9.6.zip", package = "emergeIFNVol"),repos = NULL, type = "win.binary")
@@ -58,16 +60,22 @@ modeles_hdec_IFN <- function(dos_projet = NULL){
                          title = "choix de la première année dont les données IFN seront considérées")
   an_fin <- tk_select.list(an_debut:2017, preselect = NULL, multiple = F,
                              title = "choix de la dernière année dont les données IFN seront considérées")
-  IFN <- import_IFN(choix_dept = choix_dept, choix_ser = choix_ser, annees = an_debut:an_fin, save_dsn = paste(dos_projet,"IFNdon/IFN_data.rds",sep = "/"))
+  IFN <- import_IFN(choix_dept = choix_dept, choix_ser = choix_ser, annees = an_debut:an_fin, split = T, save_dsn = paste(dos_projet,"IFNdon/IFN_data.rds",sep = "/"))
   IFN <- classif_cat_Diam(IFN)
-  IFN_vol <- BD_vol(IFN, code_ess)
+  IFN_vol <- BD_vol(IFN_data = IFN, code_ess = code_ess)
   resultat <-Nb_arbre_hdec_bois_fort(IFN_vol, code_ess, nb_arbre_min = 270)
   res_modelisation <- modelisation(IFN_vol, resultat$tbl_corresp)
-  modele_dir <- str_c(dos_projet,"/modeles/NumDep_",str_c(choix_dept, collapse = "_"),"_NomSER_",str_c(choix_ser, collapse = "_"),collapse = "")
-  dir.create(modele_dir)
-  saveRDS(res_modelisation, str_c(modele_dir,"modele.rds",sep= "/"))
-  dir.create(str_c(modele_dir,"graphs", sep ="/"))
-  graph_res_modelisation(dsn = str_c(modele_dir,"graphs/",sep = "/",collapse = ""), res_modelisation)
+  nom_fichier_modele <- svDialogs::dlg_input(message = "entrez le nom de l'archive rds contenant les modéles qui ont été calibrés")$res
+  if(!dir.exists(paste(dos_projet,"modeles",nom_fichier_modele,sep = "/"))){
+    dir.create(paste(dos_projet,"modeles",nom_fichier_modele,sep = "/"), showWarnings = F)
+  }
+  saveRDS(res_modelisation, str_c(dos_projet,"modeles",nom_fichier_modele,"modele.rds",sep= "/"))
+  if(!dir.exists(paste(dos_projet,"modeles",nom_fichier_modele,"graphs",sep = "/"))){
+    dir.create(paste(dos_projet,"modeles",nom_fichier_modele,"graphs",sep = "/"), showWarnings = F)
+  }
+  graph_res_modelisation(dsn = paste(dos_projet,"modeles",nom_fichier_modele,"graphs",sep = "/"), res_modelisation)
+  coefs <- recap_coef_modeles(res_modelisation)
+  xlsx::write.xlsx(coefs, paste(dos_projet,"modeles",nom_fichier_modele,"recap_coeffs.xlsx",sep = "/"))
   return(modele_dir)
 }
 

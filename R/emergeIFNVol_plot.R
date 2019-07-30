@@ -23,32 +23,32 @@ plot_don_Vol <- function (IFNarbres, file_path ="", x = NULL, y = NULL, color = 
   IFNarbres$grd_catD <- factor(IFNarbres$grd_catD, levels = c("PB", "BM", "GB", "TGB"))
 
   IFNarbres_EPC <- IFNarbres %>%
-    filter(code_rgrp == "EPC")
+    dplyr::filter(code_rgrp == "EPC")
 
   IFNarbres_SAP <- IFNarbres %>%
-    filter(code_rgrp == "SAP")
+    dplyr::filter(code_rgrp == "SAP")
 
   IFNarbres_HET <- IFNarbres %>%
-    filter(code_rgrp == "HET")
+    dplyr::filter(code_rgrp == "HET")
 
   IFNarbres_FRE <- IFNarbres %>%
-    filter(code_rgrp == "FRE")
+    dplyr::filter(code_rgrp == "FRE")
 
   IFNarbres_ERA <- IFNarbres %>%
-    filter(code_rgrp == "ERA")
+    dplyr::filter(code_rgrp == "ERA")
 
   IFNarbres_A_F <- IFNarbres %>%
-    filter(!code_rgrp %in% c("HET", "FRE", "ERA"),
+    dplyr::filter(!code_rgrp %in% c("HET", "FRE", "ERA"),
            fam == "F")
 
   IFNarbres_A_R <- IFNarbres %>%
-    filter(!code_rgrp %in% c("EPC", "SAP"),
+    dplyr::filter(!code_rgrp %in% c("EPC", "SAP"),
            fam == "R")
   IFNarbres_res <- IFNarbres %>%
-    filter(fam == "R")
+    dplyr::filter(fam == "R")
 
   IFNarbres_feu <- IFNarbres %>%
-    filter(fam == "F")
+    dplyr::filter(fam == "F")
 
 
   plot1 = ggplot(IFNarbres, aes(x = x, y = y,  color=color, shape = shape))+

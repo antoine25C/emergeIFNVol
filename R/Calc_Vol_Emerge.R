@@ -103,7 +103,7 @@ Calc_Vol_Emerge <- function(Id_arbre,ess,d13, htot, X=NULL, Y=NULL, crs = NA ){
 
   BD$ser[!(BD$ser %in% unique(names(modele)))] <- "tt_ser"
   BD <- BD %>%
-    filter(!is.na(code))
+    dplyr::filter(!is.na(code))
   BD <- predict_hdec(modele, BD)
   BD$hdec[!is.na(BD$hdec) & BD$hdec > BD$htot] <- BD$htot[!is.na(BD$hdec) & BD$hdec > BD$htot]
   BD <- BD %>%
