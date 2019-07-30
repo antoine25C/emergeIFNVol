@@ -53,7 +53,7 @@ Calc_Vol_Emerge <- function(Id_arbre,ess,d13, htot, X=NULL, Y=NULL, crs = NA ){
   library(onfR)
   #----------------chargement des Rdata nécessaires-----------
   code_ess <-emergeIFNVol::code_ess
-  codeser <- emergeIFNVol::codeser
+  codeser <- emergeIFNVol::code_ser
   Ser_shape <- emergeIFNVol::Ser_shape
   modele <- try(readRDS(choose.files(default = paste(dos_projet,"modeles",sep = "/"), caption = "Veuillez selectionner l'archive .rds contenant les données des modèles de prédiction de la hauteur de décrochement",
                                  multi = F, filters = ".rds")), silent = T)

@@ -30,10 +30,12 @@ usethis::use_data(code_ess_Emerge, internal = T, overwrite = T)
 usethis::use_data(Ser_shape, internal = T, overwrite = T)
 usethis::use_data(dep, internal = T, overwrite = T)
 usethis::use_data(ser, internal = T, overwrite = T)
+usethis::use_data(code_ser, internal = T, overwrite = T)
 
 usethis::use_data(code_ess, internal = F, overwrite = T)
 usethis::use_data(code_ess_Emerge, internal = F, overwrite = T)
 usethis::use_data(Ser_shape, internal = F, overwrite = T)
 usethis::use_data(dep, internal = F, overwrite = T)
 usethis::use_data(ser, internal = F, overwrite = T)
+usethis::use_data(code_ser, internal = F, overwrite = T)
 F:\1_Stage_EAM_Lidar_Acct\06_carto_volume\res\package_onfR
