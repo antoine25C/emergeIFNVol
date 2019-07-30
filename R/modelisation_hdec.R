@@ -35,6 +35,9 @@ modeles_hdec_IFN <- function(dos_projet = NULL){
   if(!dir.exists(paste(dos_projet,"modeles",sep = "/"))){
     dir.create(paste(dos_projet,"modeles",sep = "/"), showWarnings = F)
   }
+  if(!dir.exists(paste(dos_projet,"IFNdon",sep = "/"))){
+    dir.create(paste(dos_projet,"IFNdon",sep = "/"), showWarnings = F)
+  }
   #-------------------installation du package onfR-------------------
   if (!require("onfR")) install.packages(system.file("onfR","onfR_0.9.6.zip", package = "emergeIFNVol"),repos = NULL, type = "win.binary")
   library(onfR)
@@ -55,7 +58,7 @@ modeles_hdec_IFN <- function(dos_projet = NULL){
                          title = "choix de la première année dont les données IFN seront considérées")
   an_fin <- tk_select.list(an_debut:2017, preselect = NULL, multiple = F,
                              title = "choix de la dernière année dont les données IFN seront considérées")
-  IFN <- import_IFN(choix_dept = dep_choix, choix_ser = ser_choix, annees = an_debut:an_fin)
+  IFN <- import_IFN(choix_dept = dep_choix, choix_ser = ser_choix, annees = an_debut:an_fin, save_dsn = paste(dos_projet,"IFNdon/IFN_data.rds",sep = "/"))
   IFN <- classif_cat_Diam(IFN)
   IFN_vol <- BD_vol(IFN, code_ess)
   resultat <-Nb_arbre_hdec_bois_fort(IFN_vol, code_ess, nb_arbre_min = 270)
